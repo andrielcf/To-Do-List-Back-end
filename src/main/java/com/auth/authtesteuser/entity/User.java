@@ -27,6 +27,8 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String name;
+
     private String email;
 
     private String password;
@@ -34,6 +36,13 @@ public class User implements UserDetails {
     private UserRole role;
 
     
+
+    public User(String name, String email, String password, UserRole role) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+    }
 
     public User(String email, String password, UserRole role) {
         this.email = email;

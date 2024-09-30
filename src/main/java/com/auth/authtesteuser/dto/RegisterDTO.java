@@ -4,7 +4,8 @@ import jakarta.validation.constraints.NotEmpty;
 
 
 public record RegisterDTO(
-    @NotEmpty(message = "Email não pode ser nulo ou vazia") @Email(message = "Email invalido") String email, 
+    @NotEmpty(message = "Nome não pode ser nulo ou vazia") String name,
+    @NotEmpty(message = "Email não pode ser nulo ou vazia") @Email(message = "Email invalido") String email,
     @NotEmpty(message = "Senha não pode ser nulo ou vazia") String password) {
     
 }
