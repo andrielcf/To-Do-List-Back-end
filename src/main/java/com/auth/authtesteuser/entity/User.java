@@ -11,6 +11,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -34,6 +35,9 @@ public class User implements UserDetails {
     private String password;
 
     private UserRole role;
+
+    @OneToMany(mappedBy = "user")
+    private List<ListEntity> listEntities;
 
     
 
