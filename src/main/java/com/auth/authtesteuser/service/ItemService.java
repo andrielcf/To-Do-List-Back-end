@@ -30,8 +30,10 @@ public class ItemService {
             item.setListEntity(list);
             //Adiciona o item a lista
             list.getItems().add(item);
+            itemRepository.save(item);
+        } else {
+            throw new IndexOutOfBoundsException("Lista não encontrada");
         }
-        itemRepository.save(item);
     }
 
     public List<Item> getAllItemsByListId(Long id) {

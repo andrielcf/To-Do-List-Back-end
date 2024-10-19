@@ -1,5 +1,6 @@
 package com.auth.authtesteuser.service;
 
+import com.auth.authtesteuser.dto.ListNameDTO;
 import com.auth.authtesteuser.entity.Category;
 import com.auth.authtesteuser.entity.ListEntity;
 import com.auth.authtesteuser.entity.User;
@@ -7,9 +8,7 @@ import com.auth.authtesteuser.repository.CategoryRepository;
 import com.auth.authtesteuser.repository.ListEntityRepository;
 import com.auth.authtesteuser.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,30 +32,36 @@ public class ListEntityService {
             throw new IllegalArgumentException("A lista " + list.getName() + "já existe");
         }
 
-        //Itera sobre a lista de categorias da lista
-        for (Category category : list.getCategories()) {
-
-            //Verifica se a categoria existe atraves do id informado
-            Optional<Category> optionalCategory = categoryRepository.findById(category.getId());
-            if (optionalCategory.isPresent()){
-
-                //Adiciona as categorias a lista
-                list.getCategories().add(category);
-                //Adiciona a lista nas listas da categoria
-                category.getListEntities().add(list);
-            } else {
-                throw new IndexOutOfBoundsException("Categoria não encontrada");
-            }
+        Optional<User> userOptional = userRepository.findById(list.getUser().getId());
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            list.setUser(user);
+            user.getListEntities().add(list);
+        } else {
+            throw new IndexOutOfBoundsException("Usuário não encontrado");
         }
+
         listEntityRepository.save(list);
     }
 
-    public List<ListEntity> getAllListEntitiesByUserId(User user) {
-        return listEntityRepository.findAllByUserId(user.getId());
+    public List<ListEntity> getAllListEntitiesByUserId(Long id) {
+        return listEntityRepository.findAllByUserId(id);
     }
 
     public  Optional<ListEntity> getListEntityById(Long id) {
         return listEntityRepository.findById(id);
+    }
+
+    public void updateListName(Long id, ListNameDTO name) {
+        Optional<ListEntity> optionalList = listEntityRepository.findById(id);
+
+        if (optionalList.isPresent()){
+            ListEntity list = optionalList.get();
+            list.setName(name.getName());
+            listEntityRepository.save(list);
+        } else {
+            throw new IndexOutOfBoundsException("Lista não encontrada");
+        }
     }
 
     public void deleteListEntity(Long id) {

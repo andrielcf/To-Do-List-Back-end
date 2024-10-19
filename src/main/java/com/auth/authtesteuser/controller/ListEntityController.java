@@ -1,5 +1,6 @@
 package com.auth.authtesteuser.controller;
 
+import com.auth.authtesteuser.dto.ListNameDTO;
 import com.auth.authtesteuser.entity.ListEntity;
 import com.auth.authtesteuser.entity.User;
 import com.auth.authtesteuser.service.ListEntityService;
@@ -21,14 +22,18 @@ public class ListEntityController {
 
     @PostMapping
     public ResponseEntity<ListEntity> createListEntity(@RequestBody ListEntity listEntity){
-        listEntityService.createListEntity(listEntity);
-
-        return new ResponseEntity<>(listEntity, HttpStatus.CREATED);
+        try {
+            listEntityService.createListEntity(listEntity);
+            return new ResponseEntity<>(listEntity, HttpStatus.CREATED);
+        }
+        catch (Exception e){
+            return ResponseEntity.badRequest().build();
+        }
     }
 
-    @GetMapping
-    public  ResponseEntity<List<ListEntity>> getAllListEntitiesByUserId(@RequestBody User user) {
-        List<ListEntity> lists = listEntityService.getAllListEntitiesByUserId(user);
+    @GetMapping("/{id}/all")
+    public  ResponseEntity<List<ListEntity>> getAllListEntitiesByUserId(@PathVariable Long id) {
+        List<ListEntity> lists = listEntityService.getAllListEntitiesByUserId(id);
 
         if (lists.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -47,6 +52,18 @@ public class ListEntityController {
          }
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<ListEntity> updateListName(@PathVariable Long id, @RequestBody ListNameDTO name) {
+
+        try {
+            listEntityService.updateListName(id, name);
+            return ResponseEntity.ok().build();
+        }
+        catch (Exception e){
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/{id}")

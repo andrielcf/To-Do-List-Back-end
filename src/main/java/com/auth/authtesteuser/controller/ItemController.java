@@ -19,8 +19,13 @@ public class ItemController {
 
     @PostMapping
     public ResponseEntity<Item> createItem(@RequestBody Item item) {
-        itemService.createItem(item);
-        return new ResponseEntity<>(item, HttpStatus.CREATED);
+        try {
+            itemService.createItem(item);
+            return new ResponseEntity<>(item, HttpStatus.CREATED);
+        }
+        catch (Exception e){
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping("/{id}")
@@ -33,4 +38,6 @@ public class ItemController {
 
         return new ResponseEntity<>(itemsList, HttpStatus.OK);
     }
+
+
 }
