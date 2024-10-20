@@ -25,7 +25,7 @@ public class ListEntityService {
         //verifica se já existe uma lista com o mesmo nome
         Optional<ListEntity> listOptional = listEntityRepository.findByName(list.getName());
         if (listOptional.isPresent()){
-            throw new IllegalArgumentException("A lista " + list.getName() + "já existe");
+            throw new IllegalArgumentException("A lista " + list.getName() + " já existe");
         }
 
         Optional<User> userOptional = userRepository.findById(list.getUser().getId());
@@ -61,6 +61,13 @@ public class ListEntityService {
     }
 
     public void deleteListEntity(Long id) {
-        listEntityRepository.deleteById(id);
+        Optional<ListEntity> optionalList = listEntityRepository.findById(id);
+
+        if (optionalList.isPresent()) {
+            listEntityRepository.deleteById(id);
+        } else {
+            throw new IndexOutOfBoundsException("Lista não encontrada");
+        }
+
     }
 }
