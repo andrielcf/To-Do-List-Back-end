@@ -1,10 +1,8 @@
 package com.auth.authtesteuser.service;
 
 import com.auth.authtesteuser.dto.ListNameDTO;
-import com.auth.authtesteuser.entity.Category;
 import com.auth.authtesteuser.entity.ListEntity;
 import com.auth.authtesteuser.entity.User;
-import com.auth.authtesteuser.repository.CategoryRepository;
 import com.auth.authtesteuser.repository.ListEntityRepository;
 import com.auth.authtesteuser.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +16,6 @@ public class ListEntityService {
 
     @Autowired
     private ListEntityRepository listEntityRepository;
-    @Autowired
-    private CategoryRepository categoryRepository;
     @Autowired
     private UserRepository userRepository;
 

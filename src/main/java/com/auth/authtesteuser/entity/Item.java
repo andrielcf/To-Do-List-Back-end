@@ -20,9 +20,7 @@ public class Item {
 
     private String description;
 
-    private String state;
-
-    private Boolean flag;
+    private Boolean state;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "list_id")
