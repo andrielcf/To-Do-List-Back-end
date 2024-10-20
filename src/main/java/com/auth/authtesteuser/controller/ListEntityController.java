@@ -20,13 +20,13 @@ public class ListEntityController {
 
 
     @PostMapping
-    public ResponseEntity<ListEntity> createListEntity(@RequestBody ListEntity listEntity){
+    public ResponseEntity<Object> createListEntity(@RequestBody ListEntity listEntity){
         try {
             listEntityService.createListEntity(listEntity);
             return new ResponseEntity<>(listEntity, HttpStatus.CREATED);
         }
         catch (Exception e){
-            return ResponseEntity.badRequest().build();
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -43,8 +43,8 @@ public class ListEntityController {
 
     @GetMapping("/{id}")
     public  ResponseEntity<ListEntity> getListEntityById(@PathVariable Long id) {
-
          Optional<ListEntity> optionalList = listEntityService.getListEntityById(id);
+
          if (optionalList.isPresent()) {
              ListEntity list = optionalList.get();
              return new ResponseEntity<>(list, HttpStatus.OK);
@@ -54,26 +54,24 @@ public class ListEntityController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<ListEntity> updateListName(@PathVariable Long id, @RequestBody ListNameDTO name) {
-
+    public ResponseEntity<Object> updateListName(@PathVariable Long id, @RequestBody ListNameDTO name) {
         try {
             listEntityService.updateListName(id, name);
             return ResponseEntity.ok().build();
         }
         catch (Exception e){
-            return ResponseEntity.notFound().build();
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ListEntity> deleteListEntity(@PathVariable Long id) {
-
+    public ResponseEntity<Object> deleteListEntity(@PathVariable Long id) {
         try {
             listEntityService.deleteListEntity(id);
             return ResponseEntity.noContent().build();
         }
         catch (Exception e){
-            return ResponseEntity.notFound().build();
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
 
     }

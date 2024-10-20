@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/item")
@@ -18,13 +19,13 @@ public class ItemController {
 
 
     @PostMapping
-    public ResponseEntity<Item> createItem(@RequestBody Item item) {
+    public ResponseEntity<Object> createItem(@RequestBody Item item) {
         try {
             itemService.createItem(item);
             return new ResponseEntity<>(item, HttpStatus.CREATED);
         }
         catch (Exception e){
-            return ResponseEntity.notFound().build();
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
@@ -39,5 +40,24 @@ public class ItemController {
         return new ResponseEntity<>(itemsList, HttpStatus.OK);
     }
 
+    @PatchMapping("/{id}")
+    public ResponseEntity<String> updateItem(@PathVariable Long id, @RequestBody Map<String, Object> updates) {
+        try {
+            itemService.updateItem(id, updates);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> deleteItem(@PathVariable Long id) {
+        try {
+            itemService.deleteItem(id);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
 
 }
