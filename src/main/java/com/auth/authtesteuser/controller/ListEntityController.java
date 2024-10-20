@@ -2,7 +2,6 @@ package com.auth.authtesteuser.controller;
 
 import com.auth.authtesteuser.dto.ListNameDTO;
 import com.auth.authtesteuser.entity.ListEntity;
-import com.auth.authtesteuser.entity.User;
 import com.auth.authtesteuser.service.ListEntityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

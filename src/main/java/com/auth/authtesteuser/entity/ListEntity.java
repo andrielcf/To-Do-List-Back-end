@@ -1,7 +1,6 @@
 package com.auth.authtesteuser.entity;
 
 import java.util.List;
-import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -28,9 +27,6 @@ public class ListEntity {
     @JoinColumn(name = "user_id")
     @JsonBackReference
     private User user;
-
-    @ManyToMany
-    private Set<Category> categories;
 
     @OneToMany(mappedBy = "listEntity", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
