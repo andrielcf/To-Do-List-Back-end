@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -22,21 +23,27 @@ public class ListEntityService {
 
     public void createListEntity(ListEntity list){
 
-        //verifica se já existe uma lista com o mesmo nome
-        Optional<ListEntity> listOptional = listEntityRepository.findByName(list.getName());
-        if (listOptional.isPresent()){
-            throw new IllegalArgumentException("A lista " + list.getName() + " já existe");
-        }
-
+        //verifica se o usuário existe
         Optional<User> userOptional = userRepository.findById(list.getUser().getId());
         if (userOptional.isPresent()) {
             User user = userOptional.get();
+
+            //verifica se já existe uma lista com o mesmo nome
+            List<ListEntity> userLists = user.getListEntities();
+            for (ListEntity _list : userLists) {
+                boolean alreadyExists = _list.getName().equals(list.getName());
+
+                if (alreadyExists) {
+                    throw new IllegalArgumentException("A lista " + list.getName() + " já existe");
+                }
+            }
+
             list.setUser(user);
             user.getListEntities().add(list);
+
         } else {
             throw new IndexOutOfBoundsException("Usuário não encontrado");
         }
-
         listEntityRepository.save(list);
     }
 
