@@ -2,18 +2,15 @@ package com.auth.authtesteuser.controller;
 
 import java.util.List;
 import java.util.Optional;
-
 import com.auth.authtesteuser.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import com.auth.authtesteuser.entity.User;
-import com.auth.authtesteuser.repository.UserRepository;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api/user")
 public class UserController {
 
     @Autowired
