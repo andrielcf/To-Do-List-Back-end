@@ -2,6 +2,9 @@ package com.auth.authtesteuser.controller;
 
 import com.auth.authtesteuser.dto.ListNameDTO;
 import com.auth.authtesteuser.entity.ListEntity;
+import com.auth.authtesteuser.entity.User;
+import com.auth.authtesteuser.repository.UserRepository;
+import com.auth.authtesteuser.security.TokenService;
 import com.auth.authtesteuser.service.ListEntityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,15 +15,27 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/list")
+@RequestMapping("/api/list")
 public class ListEntityController {
 
     @Autowired
     private ListEntityService listEntityService;
 
+    @Autowired
+    private TokenService tokenService;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @PostMapping
-    public ResponseEntity<Object> createListEntity(@RequestBody ListEntity listEntity){
+    public ResponseEntity<Object> createListEntity(@RequestBody ListEntity listEntity, @RequestHeader("Authorization") String token){
+        
+        String userEmail = tokenService.extractSubject(token);
+
+        User user = userRepository.findByEmail(userEmail);
+
+        listEntity.setUser(user);
+
         try {
             listEntityService.createListEntity(listEntity);
             return new ResponseEntity<>(listEntity, HttpStatus.CREATED);
@@ -30,15 +45,32 @@ public class ListEntityController {
         }
     }
 
-    @GetMapping("/{id}/all")
-    public  ResponseEntity<List<ListEntity>> getAllListEntitiesByUserId(@PathVariable Long id) {
-        List<ListEntity> lists = listEntityService.getAllListEntitiesByUserId(id);
+    @GetMapping("/all")
+    public  ResponseEntity<List<ListEntity>> getAllListEntitiesByUserId(@RequestHeader("Authorization") String token) {
+        
+        String userEmail = tokenService.extractSubject(token);
+
+        User user = userRepository.findByEmail(userEmail);
+
+        List<ListEntity> lists = listEntityService.getAllListEntitiesByUserId(user.getId());
 
         if (lists.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
 
         return new ResponseEntity<>(lists, HttpStatus.OK);
+    }
+
+    @GetMapping("/gettoken")
+    public ResponseEntity getToken(@RequestHeader("Authorization") String token){
+
+        token = token.replace("Bearer ", "");
+        
+        String userEmail = tokenService.extractSubject(token);
+
+        User user = userRepository.findByEmail(userEmail);
+
+        return ResponseEntity.ok(user.getId());
     }
 
     @GetMapping("/{id}")
