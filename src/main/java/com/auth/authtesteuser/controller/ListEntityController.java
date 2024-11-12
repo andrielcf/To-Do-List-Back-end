@@ -21,24 +21,12 @@ public class ListEntityController {
     @Autowired
     private ListEntityService listEntityService;
 
-    @Autowired
-    private TokenService tokenService;
-
-    @Autowired
-    private UserRepository userRepository;
 
     @PostMapping
-    public ResponseEntity<Object> createListEntity(@RequestBody ListEntity listEntity, @RequestHeader("Authorization") String token){
-        
-        String userEmail = tokenService.extractSubject(token);
-
-        User user = userRepository.findByEmail(userEmail);
-
-        listEntity.setUser(user);
-
+    public ResponseEntity<Object> createListEntity(@RequestBody ListEntity list, @RequestHeader("Authorization") String token){
         try {
-            listEntityService.createListEntity(listEntity);
-            return new ResponseEntity<>(listEntity, HttpStatus.CREATED);
+            listEntityService.createListEntity(list, token);
+            return new ResponseEntity<>(list, HttpStatus.CREATED);
         }
         catch (Exception e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -47,12 +35,7 @@ public class ListEntityController {
 
     @GetMapping("/all")
     public  ResponseEntity<List<ListEntity>> getAllListEntitiesByUserId(@RequestHeader("Authorization") String token) {
-        
-        String userEmail = tokenService.extractSubject(token);
-
-        User user = userRepository.findByEmail(userEmail);
-
-        List<ListEntity> lists = listEntityService.getAllListEntitiesByUserId(user.getId());
+        List<ListEntity> lists = listEntityService.getAllListEntitiesByUserId(token);
 
         if (lists.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -61,17 +44,6 @@ public class ListEntityController {
         return new ResponseEntity<>(lists, HttpStatus.OK);
     }
 
-    @GetMapping("/gettoken")
-    public ResponseEntity getToken(@RequestHeader("Authorization") String token){
-
-        token = token.replace("Bearer ", "");
-        
-        String userEmail = tokenService.extractSubject(token);
-
-        User user = userRepository.findByEmail(userEmail);
-
-        return ResponseEntity.ok(user.getId());
-    }
 
     @GetMapping("/{id}")
     public  ResponseEntity<ListEntity> getListEntityById(@PathVariable Long id) {

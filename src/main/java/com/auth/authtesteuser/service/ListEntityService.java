@@ -5,6 +5,7 @@ import com.auth.authtesteuser.entity.ListEntity;
 import com.auth.authtesteuser.entity.User;
 import com.auth.authtesteuser.repository.ListEntityRepository;
 import com.auth.authtesteuser.repository.UserRepository;
+import com.auth.authtesteuser.security.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,36 +20,36 @@ public class ListEntityService {
     private ListEntityRepository listEntityRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private TokenService tokenService;
 
 
-    public void createListEntity(ListEntity list){
+    public void createListEntity(ListEntity list, String token){
 
-        //verifica se o usuário existe
-        Optional<User> userOptional = userRepository.findById(list.getUser().getId());
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
+        String userEmail = tokenService.extractSubject(token);
+        User user = userRepository.findByEmail(userEmail);
 
-            //verifica se já existe uma lista com o mesmo nome
-            List<ListEntity> userLists = user.getListEntities();
-            for (ListEntity _list : userLists) {
-                boolean alreadyExists = _list.getName().equals(list.getName());
+        //verifica se já existe uma lista com o mesmo nome
+        List<ListEntity> userLists = user.getListEntities();
+        for (ListEntity _list : userLists) {
+            boolean alreadyExists = _list.getName().equals(list.getName());
 
-                if (alreadyExists) {
-                    throw new IllegalArgumentException("A lista " + list.getName() + " já existe");
-                }
+            if (alreadyExists) {
+                throw new IllegalArgumentException("A lista " + list.getName() + " já existe");
             }
-
-            list.setUser(user);
-            user.getListEntities().add(list);
-
-        } else {
-            throw new IndexOutOfBoundsException("Usuário não encontrado");
         }
+
+        list.setUser(user);
+        user.getListEntities().add(list);
         listEntityRepository.save(list);
     }
 
-    public List<ListEntity> getAllListEntitiesByUserId(Long id) {
-        return listEntityRepository.findAllByUserId(id);
+    public List<ListEntity> getAllListEntitiesByUserId(String token) {
+        String userEmail = tokenService.extractSubject(token);
+
+        User user = userRepository.findByEmail(userEmail);
+
+        return listEntityRepository.findAllByUserId(user.getId());
     }
 
     public  Optional<ListEntity> getListEntityById(Long id) {

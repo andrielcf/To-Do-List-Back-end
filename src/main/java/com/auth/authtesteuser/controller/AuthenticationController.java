@@ -22,12 +22,11 @@ import com.auth.authtesteuser.security.TokenService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/auth/")
+@RequestMapping("/api/auth")
 public class AuthenticationController {
 
     @Autowired
     private AuthenticationManager authenticationManager;
-
     @Autowired
     private UserRepository userRepository;
 
