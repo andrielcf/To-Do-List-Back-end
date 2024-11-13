@@ -24,6 +24,10 @@ public class ItemService {
 
     public void createItem(Item item) {
 
+        if (item.getDescription().isEmpty()){
+            throw new RuntimeException("O item não pode estar vazio");
+        }
+
         //verifica se a lista existe
         Optional<ListEntity> optionalList = listEntityRepository.findById(item.getListEntity().getId());
         if (optionalList.isPresent()){
