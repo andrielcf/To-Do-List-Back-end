@@ -26,6 +26,10 @@ public class ListEntityService {
 
     public void createListEntity(ListEntity list, String token){
 
+        if (list.getName().isEmpty()){
+            throw new RuntimeException("O nome da lista não pode estar vazio");
+        }
+
         String userEmail = tokenService.extractSubject(token);
         User user = userRepository.findByEmail(userEmail);
 
